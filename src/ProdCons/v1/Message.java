@@ -1,4 +1,4 @@
-package ProdCons;
+package ProdCons.v1;
 
 
 public class Message{

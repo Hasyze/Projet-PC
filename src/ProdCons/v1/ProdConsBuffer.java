@@ -1,4 +1,4 @@
- package ProdCons;
+ package ProdCons.v1;
 
 import java.util.concurrent.Semaphore;
 
@@ -7,6 +7,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	int bufferSz;
 	private Message[] buffer;
 	int nfull = 0, nempty;
+	int totmsg=0;
 
 	ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
@@ -27,6 +28,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		}
 		buffer[nfull++] = m;
 		nempty--;
+		totmsg++;
 		notifyAll();
 	}
 
@@ -52,7 +54,6 @@ public class ProdConsBuffer implements IProdConsBuffer {
 
 	@Override
 	public int totmsg() {
-		// TODO Auto-generated method stub
-		return 0;
+		return totmsg;
 	}
 }
