@@ -26,8 +26,9 @@ public class ProdConsBuffer implements IProdConsBuffer {
 				e.printStackTrace();
 			}
 		}
-		buffer[nfull++] = m;
+		buffer[nfull] = m;
 		nempty--;
+		nfull = (nfull +1);//% bufferSz;
 		totmsg++;
 		notifyAll();
 	}

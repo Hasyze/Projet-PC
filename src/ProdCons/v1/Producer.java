@@ -16,7 +16,7 @@ public class Producer  extends Thread {
 	}
 	
 	public void run() {
-		for (int i = 0; i < nmsg; i++) {
+		for (int i = 0; i < buff.bufferSz; i++) {
 		       try {
 				buff.put(new Message(i));
 			} catch (InterruptedException e1) {
