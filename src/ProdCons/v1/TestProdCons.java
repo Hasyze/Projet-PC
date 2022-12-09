@@ -27,14 +27,6 @@ public class TestProdCons {
 				Cons[i] = new Consumer(i, buff,consTime);
 			}
 	      
-	      for (int i = 0; i < nProd; i++){
-				Prods[i].join();
-			}
-	      
-	      for (int i = 0; i < nCons; i++){
-				Cons[i].join();
-			}
-	      
 			System.out.println("Fin");
 			
 	   }

@@ -20,8 +20,12 @@ public class Producer  extends Thread {
 		       try {
 				buff.put(new Message(i));
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				try {
+					this.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		       System.out.println("Producteur #" + this.id 
 		                        + " met : " + i);

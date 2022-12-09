@@ -20,8 +20,12 @@ public class Consumer extends Thread {
 				val = buff.get();
 				Thread.sleep(consTime);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try {
+					this.join();
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
             System.out.println("Consommateur #" + this.id + " prend: " + val.id());
         }

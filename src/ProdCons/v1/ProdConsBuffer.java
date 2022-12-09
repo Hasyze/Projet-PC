@@ -1,6 +1,6 @@
  package ProdCons.v1;
 
-import java.util.concurrent.Semaphore;
+
 
 public class ProdConsBuffer implements IProdConsBuffer {
 
@@ -19,31 +19,24 @@ public class ProdConsBuffer implements IProdConsBuffer {
 
 	@Override
 	public synchronized void put(Message m) throws InterruptedException {
-		while (nempty <= 0 && nfull >= bufferSz) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		if (nempty <= 0) {
+			throw new InterruptedException();
 		}
 		buffer[nfull] = m;
-		nempty--;
-		nfull = (nfull +1);//% bufferSz;
+		nempty -= 1;
+		nfull += 1;//% bufferSz;
 		totmsg++;
 		notifyAll();
 	}
 
 	@Override
 	public synchronized Message get() throws InterruptedException {
-		while (nfull <= 0 && nempty >= bufferSz) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		if (nfull <= 0) {
+			throw new InterruptedException();
 		}
-		Message msg = buffer[--nfull];
-		nempty++;
+		nfull -= 1;
+		Message msg = buffer[nfull];
+		nempty += 1;
 		notifyAll();
 		return msg;
 	}
