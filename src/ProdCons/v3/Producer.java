@@ -1,4 +1,4 @@
-package ProdCons.v1;
+package ProdCons.v3;
 
 public class Producer  extends Thread {
 	
@@ -16,6 +16,7 @@ public class Producer  extends Thread {
 	}
 	
 	public void run() {
+		//while (nmsg != buff.totmsg()) {
 			for (int i = 0; i < this.nmsg; i++) {
 				Message m = new Message(i);
 			       try {

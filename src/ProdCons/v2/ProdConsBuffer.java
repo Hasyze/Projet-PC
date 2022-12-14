@@ -1,4 +1,4 @@
- package ProdCons.v1;
+ package ProdCons.v2;
 
 
 
@@ -8,12 +8,14 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	Message[] buffer;
 	int totmsg=0;
 	int get , put;
+	boolean done;
 
 	ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
 		buffer = new Message[bufferSz];
 		get = 0; 
 		put = 0;
+		done =false;
 	}
 
 	@Override
@@ -47,5 +49,13 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	@Override
 	public int totmsg() {
 		return totmsg;
+	}
+	
+	public void Done () {
+		 done = true;
+	}
+	
+	public boolean isDone() {
+		return done;
 	}
 }

@@ -1,4 +1,4 @@
-package ProdCons.v1;
+package ProdCons.v3;
 
 public class Consumer extends Thread {
 
@@ -14,7 +14,7 @@ public class Consumer extends Thread {
 	}
 
 	public void run() {
-		while (true) {
+		while (!buff.isDone()) {
 			try {
 				Message val = buff.get();
 				System.out.println("Consommateur #" + this.id + " prend: " + val.id());
@@ -23,6 +23,7 @@ public class Consumer extends Thread {
 				
 			}
 		}
+		System.out.println("No more messages!!");
 	}
 
 }

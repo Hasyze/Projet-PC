@@ -1,4 +1,4 @@
-package ProdCons.v1;
+package ProdCons.v2;
 
 import java.util.Random;
 
@@ -21,19 +21,29 @@ public class TestProdCons {
 	      ProdConsBuffer buff = new ProdConsBuffer(bufSz);
 	      
 	      Producer[] Prods = new Producer[nProd];
-	      
+	     
 	      
 	      for (int i = 0; i < nProd; i++){
 	    	  	int nmsg = r.nextInt(minProd, maxProd);
 				Prods[i] = new Producer(i,buff,prodTime,nmsg);
 			}
 	      
+	     
 	      Consumer[] Cons = new Consumer[nCons];
+	     
 	      for (int i = 0; i < nCons; i++){
 				Cons[i] = new Consumer(i, buff,consTime);
 			}
-
-			
+	      
+	      for (int i = 0; i < nProd; i++){
+				Prods[i].join();
+			}
+	      
+	      buff.done= true;
+	      
+	      for (int i = 0; i < nCons; i++){
+				Cons[i].interrupt();;
+			}
 	   }
 	
 }

@@ -1,4 +1,4 @@
-package ProdCons.v1;
+package ProdCons.v2;
 
 public class Producer  extends Thread {
 	
