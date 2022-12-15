@@ -9,7 +9,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	int totmsg = 0;
 	Semaphore notFull;
 	Semaphore notEmpty;
-	Semaphore mutex;
+	Semaphore mutexIn, mutexOut;
 	int get, put;
 	boolean done;
 
@@ -18,32 +18,34 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		buffer = new Message[bufferSz];
 		get = 0;
 		put = 0;
-		notFull = new Semaphore(bufferSz,true);
-		notEmpty = new Semaphore(0,true);
-		mutex = new Semaphore(1,true);
+		notFull = new Semaphore(bufferSz, true);
+		notEmpty = new Semaphore(0, true);
+		mutexIn = new Semaphore(1, true);
+		mutexOut = new Semaphore(1, true);
 		done = false;
 	}
 
 	@Override
 	public void put(Message m) throws InterruptedException {
-		mutex.acquire();
 		notFull.acquire();
+		mutexIn.acquire();
 		buffer[put % bufferSz] = m;
 		put++;
 		totmsg++;
+		mutexIn.release();
 		notEmpty.release();
-		mutex.acquire();
 	}
 
 	@Override
 	public Message get() throws InterruptedException {
-		mutex.release();
 		notEmpty.acquire();
-		Message msg = buffer[get % bufferSz];
+		mutexOut.acquire();
+		Message msg;
+		msg = buffer[get % bufferSz];
 		if (msg != null)
 			get++;
+		mutexOut.release();
 		notFull.release();
-		mutex.release();
 		return msg;
 	}
 

@@ -8,48 +8,68 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	Message[] buffer;
 	int nfull = 0, nempty;
 	int totmsg = 0;
-	Semaphore notFull;
-	Semaphore notEmpty;
 	Semaphore mutex;
 	int get, put;
-	boolean termine;
+	boolean done;
 
 	ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
 		buffer = new Message[bufferSz];
-		// for(int i=0; i<bufferSz; i++)
-		// buffer[i] = new Message(i);
 		nempty = bufferSz;
 		get = 0;
 		put = 0;
-		notFull = new Semaphore(bufferSz,true);
-		notEmpty = new Semaphore(0,true);
 		mutex = new Semaphore(1,true);
-		termine = false;
+		done = false;
 	}
 
 	@Override
 	public void put(Message m) throws InterruptedException {
 		mutex.acquire();
-		notFull.acquire();
-		buffer[put % bufferSz] = m;
-		put++;
-		totmsg++;
-		notEmpty.release();
+		synchronized(this) {
+			while (nmsg() >= bufferSz) {
+				wait();
+			}
+			buffer[put % bufferSz] = m;
+			put++;
+			totmsg++;
+			notifyAll();
+		}
 		mutex.acquire();
 	}
 
 	@Override
 	public Message get() throws InterruptedException {
 		mutex.release();
-		notEmpty.acquire();
-		Message msg = buffer[get % bufferSz];
-		if (msg != null)
-			get++;
-		nempty += 1;
-		notFull.release();
+		Message msg;
+		synchronized(this){
+			while (nmsg() <= 0) {
+				wait();
+			}
+			msg = buffer[get % bufferSz];
+			if (msg != null)
+				get++;
+			nempty += 1;
+			notifyAll();
+		}
 		mutex.release();
 		return msg;
+	}
+	
+	@Override
+	public Message[] get(int k) throws InterruptedException {
+		Message[] M = new Message[k];
+		synchronized(this) {
+			for (int i = 0 ; i <k ; i++) {
+				while (nmsg() <= 0) {
+					wait();
+				}
+				M[i] = buffer[get%bufferSz];
+				if(M[i] !=null)
+					get ++;
+				notifyAll();
+			}
+		}
+		return M;
 	}
 
 	@Override
@@ -62,11 +82,13 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		return totmsg;
 	}
 
-	public void Finished() {
-		termine = true;
+	public void Done() {
+		done = true;
 	}
 
-	public boolean isFinished() {
-		return termine;
+	public boolean isDone() {
+		return done;
 	}
+
+	
 }

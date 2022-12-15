@@ -9,7 +9,7 @@ public class TestProdCons {
 	      
 	      int nProd = 3;
 	      int nCons = 3;
-	      int bufSz = 2;
+	      int bufSz = 10;
 	      int prodTime =1;
 	      int consTime =1;
 	      int minProd = 5;
@@ -17,7 +17,6 @@ public class TestProdCons {
 	      
 	      Random r = new Random();
 	      
-	      //int nmsg =(minProd + ( (int) Math.random()*10) %(maxProd-minProd)); //System.out.println(nmsg);
 	      
 	      ProdConsBuffer buff = new ProdConsBuffer(bufSz);
 	      
@@ -41,12 +40,11 @@ public class TestProdCons {
 				Prods[i].join();
 			}
 	      
-	      buff.termine= true;
+	      buff.done= true;
 	      
 	      for (int i = 0; i < nCons; i++){
 				Cons[i].interrupt();;
 			}
-			//System.out.println("Fin");
 			
 	   }
 	
