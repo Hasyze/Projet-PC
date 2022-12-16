@@ -1,4 +1,4 @@
-package ProdCons.v3;
+package ProdCons.v6;
 
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
@@ -20,9 +20,6 @@ public class TestProdCons {
 		int maxProd = Integer.parseInt(properties.getProperty("maxProd"));
 
 		Random r = new Random();
-
-		// int nmsg =(minProd + ( (int) Math.random()*10) %(maxProd-minProd));
-		// //System.out.println(nmsg);
 
 		ProdConsBuffer buff = new ProdConsBuffer(bufSz);
 

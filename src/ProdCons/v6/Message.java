@@ -1,4 +1,4 @@
-package ProdCons.v3;
+package ProdCons.v6;
 
 public class Message {
 	private int id;

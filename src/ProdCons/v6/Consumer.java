@@ -1,4 +1,6 @@
-package ProdCons.v1;
+package ProdCons.v6;
+
+import java.util.Random;
 
 public class Consumer extends Thread {
 
@@ -12,12 +14,12 @@ public class Consumer extends Thread {
 	}
 
 	public void run() {
-		while (true) {
+		while (!buff.isDone()) {
+			int k = 5;
 			try {
-				Message val = buff.get();
+				Message[] msg = buff.get(k);
 				sleep(consTime * 1000);
 			} catch (InterruptedException e) {
-
 			}
 		}
 	}

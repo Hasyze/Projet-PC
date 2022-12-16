@@ -8,7 +8,10 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	Message[] buffer;
 	int nfull = 0, nempty;
 	int totmsg = 0;
+	Semaphore notFull;
+	Semaphore notEmpty;
 	Semaphore mutex;
+	Semaphore ks;
 	int get, put;
 	boolean done;
 
@@ -18,57 +21,62 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		nempty = bufferSz;
 		get = 0;
 		put = 0;
-		mutex = new Semaphore(1,true);
+		notFull = new Semaphore(bufferSz, true);
+		notEmpty = new Semaphore(0, true);
+		mutex = new Semaphore(1, true);
+		ks = new Semaphore(1, true);
 		done = false;
 	}
 
 	@Override
 	public void put(Message m) throws InterruptedException {
+		notFull.acquire();
 		mutex.acquire();
-		synchronized(this) {
-			while (nmsg() >= bufferSz) {
-				wait();
-			}
-			buffer[put % bufferSz] = m;
-			put++;
-			totmsg++;
-			notifyAll();
-		}
-		mutex.acquire();
+		buffer[put % bufferSz] = m;
+		String name = Thread.currentThread().getName();
+		System.out.println("Producteur " + name.charAt(name.length() - 1) + " met : " + m.id());
+		put++;
+		totmsg++;
+		mutex.release();
+		notEmpty.release();
 	}
 
 	@Override
 	public Message get() throws InterruptedException {
+		notEmpty.acquire();
+		mutex.acquire();
+		Message msg = buffer[get % bufferSz];
+		String name = Thread.currentThread().getName();
+		System.out.println("Consommateur " + name.charAt(name.length() - 1) + " prend: " + msg.id());
+		if (msg != null)
+			get++;
 		mutex.release();
-		Message msg;
-		synchronized(this){
-			while (nmsg() <= 0) {
-				wait();
-			}
-			msg = buffer[get % bufferSz];
-			if (msg != null)
-				get++;
-			nempty += 1;
-			notifyAll();
-		}
-		mutex.release();
+		notFull.release();
 		return msg;
 	}
-	
+
 	@Override
 	public Message[] get(int k) throws InterruptedException {
+		ks.acquire();
 		Message[] M = new Message[k];
-		synchronized(this) {
-			for (int i = 0 ; i <k ; i++) {
-				while (nmsg() <= 0) {
-					wait();
-				}
-				M[i] = buffer[get%bufferSz];
-				if(M[i] !=null)
-					get ++;
-				notifyAll();
+		String name = Thread.currentThread().getName();
+		System.out.println("Consommateur " + name.charAt(name.length() - 1) + " prend " + k + " messages: \n[ ");
+		for (int i = 0; i < k; i++) {
+			try {
+				notEmpty.acquire();
+				mutex.acquire();
+				M[i] = buffer[get % bufferSz];
+				System.out.print(M[i].id() + " ;");
+				if (M[i] != null)
+					get++;
+				mutex.release();
+				notFull.release();
+			} catch (InterruptedException e) {
+				System.out.println("Des messages restants !!!");
 			}
 		}
+		System.out.println("]");
+		ks.release();
 		return M;
 	}
 
@@ -90,5 +98,4 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		return done;
 	}
 
-	
 }
