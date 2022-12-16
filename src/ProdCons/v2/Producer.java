@@ -18,7 +18,7 @@ public class Producer extends Thread {
 			Message m = new Message(i);
 			try {
 				buff.put(m);
-				sleep(prodTime * 1000);
+				sleep(prodTime);
 			} catch (InterruptedException e1) {
 
 			}

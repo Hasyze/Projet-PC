@@ -41,28 +41,35 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		mutex.release();
 		notEmpty.release();
 	}
-	
+
 	@Override
 	public void put(Message m, int n) throws InterruptedException {
 		ns.acquire();
+		Message[] msg = new Message[n];
 		String name = Thread.currentThread().getName();
-		System.out.print("Producteur " + name.charAt(name.length() - 1) + " met " + n + " messages: \n[ ");
+		System.out.println("Producteur " + name.charAt(name.length() - 1) + " met " + n + " message(s): " + m.id());
 		for (int i = 0; i < n; i++) {
 			try {
 				notFull.acquire();
 				mutex.acquire();
+				msg[i] = m;
 				buffer[put % bufferSz] = m;
-				System.out.print(m.id() + " ;");
 				put++;
-				totmsg++;
+				totmsg = +n;
 				mutex.release();
 				notEmpty.release();
 			} catch (InterruptedException e) {
 				System.out.println("Des messages restants non écrits !!!");
 			}
 		}
-		System.out.println("]");
 		ns.release();
+		for (int j = 0; j < n; j++) {
+			msg[j].get.acquire();
+		}
+		for (int k = 0; k < n; k++) {
+			msg[k].getArray.release();
+		}
+
 	}
 
 	@Override
@@ -90,7 +97,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 				notEmpty.acquire();
 				mutex.acquire();
 				M[i] = buffer[get % bufferSz];
-				System.out.print(M[i].id() + " ;");
+				System.out.print(M[i].id() + " ");
 				if (M[i] != null)
 					get++;
 				mutex.release();
@@ -121,7 +128,5 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	public boolean isDone() {
 		return done;
 	}
-
-	
 
 }

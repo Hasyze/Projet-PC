@@ -15,7 +15,7 @@ public class Consumer extends Thread {
 		while (true) {
 			try {
 				Message val = buff.get();
-				sleep(consTime * 1000);
+				sleep(consTime);
 			} catch (InterruptedException e) {
 
 			}

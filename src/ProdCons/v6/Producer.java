@@ -1,5 +1,7 @@
 package ProdCons.v6;
 
+import java.util.Random;
+
 public class Producer extends Thread {
 
 	ProdConsBuffer buff;
@@ -14,15 +16,16 @@ public class Producer extends Thread {
 	}
 
 	public void run() {
-		//for (int i = 0; i < this.nmsg; i++) {
+		for (int i = 0; i < nmsg; i++) {
+			int n = 3;
 			Message m = new Message(nmsg);
 			try {
-				buff.put(m,10);
-				sleep(prodTime * 1000);
+				buff.put(m, n);
+				sleep(prodTime);
 			} catch (InterruptedException e1) {
 
 			}
 
-		//}
+		}
 	}
 }

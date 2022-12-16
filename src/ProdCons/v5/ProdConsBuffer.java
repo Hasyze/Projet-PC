@@ -66,7 +66,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 				notEmpty.acquire();
 				mutex.acquire();
 				M[i] = buffer[get % bufferSz];
-				System.out.print(M[i].id() + " ;");
+				System.out.print(M[i].id() + " ");
 				if (M[i] != null)
 					get++;
 				mutex.release();

@@ -15,10 +15,11 @@ public class Consumer extends Thread {
 
 	public void run() {
 		while (!buff.isDone()) {
-			int k = 5;
 			try {
-				Message[] msg = buff.get(k);
-				sleep(consTime * 1000);
+				Message msg = buff.get();
+				sleep(consTime);
+				msg.get.release();
+				msg.getArray.acquire();
 			} catch (InterruptedException e) {
 			}
 		}

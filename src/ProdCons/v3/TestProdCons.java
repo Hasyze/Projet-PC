@@ -47,7 +47,6 @@ public class TestProdCons {
 
 		for (int i = 0; i < nCons; i++) {
 			Cons[i].interrupt();
-			;
 		}
 
 	}
