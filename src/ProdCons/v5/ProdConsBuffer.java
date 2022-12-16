@@ -60,7 +60,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		ks.acquire();
 		Message[] M = new Message[k];
 		String name = Thread.currentThread().getName();
-		System.out.println("Consommateur " + name.charAt(name.length() - 1) + " prend " + k + " messages: \n[ ");
+		System.out.print("Consommateur " + name.charAt(name.length() - 1) + " prend " + k + " messages: \n[ ");
 		for (int i = 0; i < k; i++) {
 			try {
 				notEmpty.acquire();

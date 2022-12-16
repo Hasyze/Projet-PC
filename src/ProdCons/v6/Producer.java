@@ -14,15 +14,15 @@ public class Producer extends Thread {
 	}
 
 	public void run() {
-		for (int i = 0; i < this.nmsg; i++) {
-			Message m = new Message(i);
+		//for (int i = 0; i < this.nmsg; i++) {
+			Message m = new Message(nmsg);
 			try {
-				buff.put(m);
+				buff.put(m,10);
 				sleep(prodTime * 1000);
 			} catch (InterruptedException e1) {
 
 			}
 
-		}
+		//}
 	}
 }

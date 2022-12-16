@@ -11,7 +11,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	Semaphore notFull;
 	Semaphore notEmpty;
 	Semaphore mutex;
-	Semaphore ks;
+	Semaphore ks, ns;
 	int get, put;
 	boolean done;
 
@@ -25,6 +25,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		notEmpty = new Semaphore(0, true);
 		mutex = new Semaphore(1, true);
 		ks = new Semaphore(1, true);
+		ns = new Semaphore(1, true);
 		done = false;
 	}
 
@@ -43,8 +44,25 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	
 	@Override
 	public void put(Message m, int n) throws InterruptedException {
-		// TODO Auto-generated method stub
-		
+		ns.acquire();
+		String name = Thread.currentThread().getName();
+		System.out.print("Producteur " + name.charAt(name.length() - 1) + " met " + n + " messages: \n[ ");
+		for (int i = 0; i < n; i++) {
+			try {
+				notFull.acquire();
+				mutex.acquire();
+				buffer[put % bufferSz] = m;
+				System.out.print(m.id() + " ;");
+				put++;
+				totmsg++;
+				mutex.release();
+				notEmpty.release();
+			} catch (InterruptedException e) {
+				System.out.println("Des messages restants non écrits !!!");
+			}
+		}
+		System.out.println("]");
+		ns.release();
 	}
 
 	@Override
@@ -66,7 +84,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 		ks.acquire();
 		Message[] M = new Message[k];
 		String name = Thread.currentThread().getName();
-		System.out.println("Consommateur " + name.charAt(name.length() - 1) + " prend " + k + " messages: \n[ ");
+		System.out.print("Consommateur " + name.charAt(name.length() - 1) + " prend " + k + " messages: \n[ ");
 		for (int i = 0; i < k; i++) {
 			try {
 				notEmpty.acquire();
@@ -78,7 +96,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 				mutex.release();
 				notFull.release();
 			} catch (InterruptedException e) {
-				System.out.println("Des messages restants !!!");
+				System.out.println("Des messages restants non lus!!!");
 			}
 		}
 		System.out.println("]");
